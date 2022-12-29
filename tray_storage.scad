@@ -1,5 +1,8 @@
-createStorage = true;
-createBox = false;
+createStorage = false;
+createBox = true;
+boxOffset = 20;
+blockerOffset = 4;
+blockerRadius = 0.7;
 
 module createStorage(slot_clearance) {
     slot_width = 15 + slot_clearance;
@@ -86,15 +89,26 @@ module createBox(boxDimensions, boxSpacing, roundRadius, handleLength, handleThi
                     }
                 }
                 cube(boxDimensions);
+                $fn=100; 
+                blockerTrim = boxDimensions[2] * 0.4;
+                blockerLength = boxDimensions[2]-blockerTrim;
+                
+                for (i = [0 : 1]) {
+                    translate([i * boxDimensions[0], blockerOffset, blockerTrim/2]) sphere(blockerRadius);
+                    translate([i * boxDimensions[0], blockerOffset, blockerLength+blockerTrim/2]) sphere(blockerRadius);
+                    translate([i * boxDimensions[0], blockerOffset, blockerTrim/2]) cylinder(blockerLength, blockerRadius, blockerRadius);
+                }
             }
             for (i = [0 : $children - 1]) {
                 children(i);
             }
         }
     }
+  
     if (createStorage) {
         translate([-boxSpacing, 0, -boxSpacing]) createStoragePart(boxDimensions, boxSpacing, trayOffset);
     }
+
 }
 
 module createSlots(slot_dimensions, slots_rows, slots_columns, wall, offs) {
@@ -116,7 +130,7 @@ module createLine(spacing, line_height, faces, boxLength) {
     childrenSize = $children - 1;
     for (i = [0 : childrenSize]) {
 
-        translate([partialSum(faces, 0, i) + i * spacing, 0, line_height]) 
+        translate([partialSum(faces, 0, i) + i * spacing + i * boxOffset, 0, line_height]) 
             children(i);
         
     }
@@ -138,58 +152,38 @@ smallBox = [15, 180, 15];
 smallTray = [6, 6, 6];
 
 spacing = 1.6;
-offset = 0.8;
+offset = 0.4;
 
 slot25x30x18 = [25, 30, 18];
 
 trayLength = 180;
 line0Height = 18;
 
+slotHeight = 17.2;
+
 createLine(2, 0, [0, 36, 36, 32, 32, 32], trayLength) {
     createBox([36, trayLength, 18], 1.6, 4, 8, 1.6, 0.4) {
-        createSlots([16, 32, 18], 5, 2, 0.8, 0);
-        createSlots([32, 10, 18], 1, 1, 0.8, -165);
+        createSlots([16, 32, slotHeight], 5, 2, 0.8, 0);
+        createSlots([32, 10, slotHeight], 1, 1, 0.8, -165);
     }
     createBox([36, trayLength, 18], 1.6, 4, 8, 1.6, 0.4) {
-        createSlots([32, 43, 18], 4, 1, 0.8, 0);
+        createSlots([32, 43, slotHeight], 4, 1, 0.8, 0);
     }
     createBox([32, trayLength, 18], 1.6, 4, 8, 1.6, 0.4) {
-        createSlots([30, 25, 18], 6, 1, 0.8, 0);
-        createSlots([30, 20, 18], 1, 1, 0.8, -155);
+        createSlots([30, 25, slotHeight], 6, 1, 0.8, 0);
+        createSlots([30, 20, slotHeight], 1, 1, 0.8, -155);
     }
     createBox([32, trayLength, 18], 1.6, 4, 8, 1.6, 0.4) {
-        createSlots([30, 25, 18], 6, 1, 0.8, 0);
-        createSlots([30, 20, 18], 1, 1, 0.8, -155);
+        createSlots([30, 25, slotHeight], 6, 1, 0.8, 0);
+        createSlots([30, 20, slotHeight], 1, 1, 0.8, -155);
     }
     createBox([32, trayLength, 18], 1.6, 4, 8, 1.6, 0.4) {
-        createSlots([30, 47, 18], 3, 1, 0.8, 0);
-        createSlots([30, 30, 18], 1, 1, 0.8, -144);
+        createSlots([30, 47, slotHeight], 3, 1, 0.8, 0);
+        createSlots([30, 30, slotHeight], 1, 1, 0.8, -144);
     }
 }
-
-createLine(2, -(18 + spacing + offset), [0, 36, 36, 32, 32, 32], trayLength) {
-    createBox([36, trayLength, 18], 1.6, 4, 8, 1.6, 0.4) {
-        createSlots([16, 32, 18], 5, 2, 0.8, 0);
-        createSlots([32, 10, 18], 1, 1, 0.8, -165);
-    }
-    createBox([36, trayLength, 18], 1.6, 4, 8, 1.6, 0.4) {
-        createSlots([32, 43, 18], 4, 1, 0.8, 0);
-    }
-    createBox([32, trayLength, 18], 1.6, 4, 8, 1.6, 0.4) {
-        createSlots([30, 25, 18], 6, 1, 0.8, 0);
-        createSlots([30, 20, 18], 1, 1, 0.8, -155);
-    }
-    createBox([32, trayLength, 18], 1.6, 4, 8, 1.6, 0.4) {
-        createSlots([30, 25, 18], 6, 1, 0.8, 0);
-        createSlots([30, 20, 18], 1, 1, 0.8, -155);
-    }
-    createBox([32, trayLength, 18], 1.6, 4, 8, 1.6, 0.4) {
-        createSlots([30, 47, 18], 3, 1, 0.8, 0);
-        createSlots([30, 30, 18], 1, 1, 0.8, -144);
-    }
-}
-
-createLine(2, -2*(18 + spacing + offset), [0, 36, 36, 32, 32, 32], trayLength) {
+/*
+createLine(2, -(18 + spacing + 0.4), [0, 36, 36, 32, 32, 32], trayLength) {
     createBox([36, trayLength, 18], 1.6, 4, 8, 1.6, 0.4) {
         createSlots([16, 32, 18], 5, 2, 0.8, 0);
         createSlots([32, 10, 18], 1, 1, 0.8, -165);
@@ -211,7 +205,7 @@ createLine(2, -2*(18 + spacing + offset), [0, 36, 36, 32, 32, 32], trayLength) {
     }
 }
 
-createLine(2, -3*(18 + spacing + offset), [0, 36, 36, 32, 32, 32], trayLength) {
+createLine(2, -2*(18 + spacing + 0.4), [0, 36, 36, 32, 32, 32], trayLength) {
     createBox([36, trayLength, 18], 1.6, 4, 8, 1.6, 0.4) {
         createSlots([16, 32, 18], 5, 2, 0.8, 0);
         createSlots([32, 10, 18], 1, 1, 0.8, -165);
@@ -232,3 +226,4 @@ createLine(2, -3*(18 + spacing + offset), [0, 36, 36, 32, 32, 32], trayLength) {
         createSlots([30, 30, 18], 1, 1, 0.8, -144);
     }
 }
+*/
