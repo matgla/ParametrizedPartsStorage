@@ -39,7 +39,7 @@ module createStorage(slot_clearance) {
                     }
                 translate([slot_length-slot_wall/2, (slot_width - back_width) / 2 + slot_wall, back_height + (slot_height-back_height) / 2 + slot_wall]) {
                     rotate([0, 90, 0])
-                    minkowski() {
+                    minkowski() { 
                         $fn=100; 
                         cube([back_height, back_width, slot_wall*2]);
                         cylinder(r=round_radius, h=slot_wall);
