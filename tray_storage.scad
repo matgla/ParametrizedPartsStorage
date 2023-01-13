@@ -165,9 +165,9 @@ slotHeight = 17.2;
 /*module createSlots(slot_dimensions, slots_rows, slots_columns, wall, offs) {*/
 
 
-createLine(2, 0, [0, 36, 36, 32, 32, 32], 61.2) {
-    createBox([9.2, 61.2, 8.6], 1.6, 2, 5, 1.2, 0) {
-        createSlots([8, 60, 8], 1, 1, 0.3, 0);
+createLine(2, 0, [0, 36, 36, 32, 32, 32], 67) {
+    createBox([12.2, 66.2, 12.2], 1.6, 2, 5, 1.2, 0) {
+        createSlots([11, 65, 11], 1, 1, 0.3, 0);
     }
 }
 /*    createBox([36, trayLength, 18], 1.6, 4, 8, 1.6, 0.4) {
