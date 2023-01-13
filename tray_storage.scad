@@ -1,81 +1,40 @@
-createStorage = false;
-createBox = true;
+createStorage = true;
+createBox = false;
 boxOffset = 20;
 blockerOffset = 4;
 blockerRadius = 0.7;
 
-module createStorage(slot_clearance) {
-    slot_width = 15 + slot_clearance;
-    slot_height = 10 + slot_clearance;
-    slot_wall = 0.8;
-    slot_length = 120;
-    top_height = 2;
-    bottom_height = 2;
-    lock_offset = 2;
-    back_height = 0.4 * slot_height;
-    back_width= 0.5 * slot_width;
-    round_radius = 2;
-    slots_x = 10;
-    slots_z = 5;
-    for (z = [0 : slots_z - 1]) {
-    for (x = [0 : slots_x - 1]) {
-        translate([0, x * (slot_width+slot_wall), z * (slot_height + 2*slot_wall)]) {
-            difference() {
-                cube([slot_length + slot_wall, slot_width + slot_wall * 2, slot_height + slot_wall * 2]);
-                translate([-0.001, slot_wall, slot_wall]) 
-                    cube([slot_length, slot_width, slot_height]);
-                translate([lock_offset, slot_wall, slot_wall + slot_wall/2])
-                rotate([-90, 0, 0])
-                    difference() {
-                        $fn=100; 
-                        cylinder(slot_width, slot_wall, slot_wall);
-                    }
-                    
-                translate([lock_offset+10, slot_wall, slot_height + slot_wall - slot_wall/2])
-                rotate([-90, 0, 0])
-                    difference() {
-                        $fn=100; 
-                        cylinder(slot_width, slot_wall, slot_wall);
-                    }
-                translate([slot_length-slot_wall/2, (slot_width - back_width) / 2 + slot_wall, back_height + (slot_height-back_height) / 2 + slot_wall]) {
-                    rotate([0, 90, 0])
-                    minkowski() { 
-                        $fn=100; 
-                        cube([back_height, back_width, slot_wall*2]);
-                        cylinder(r=round_radius, h=slot_wall);
-                    }
-                }
-            }
-        }
-    }
-}
-}
-
-module createStoragePart(boxDimensions, boxSpacing, trayOffset) {
+module createStoragePart(boxDimensions, trayOffset, wallSize) {
+    boxSpacing = wallSize * 2;
+    xSize = boxDimensions[0] + boxSpacing * 2;
+    ySize = boxDimensions[1] + boxSpacing;
+    zSize = boxDimensions[2] + boxSpacing * 2;
     translate([0, 0, 0]) difference() {
-        cube([boxDimensions[0] + boxSpacing * 2, boxDimensions[1] + boxSpacing * 2, boxDimensions[2] + boxSpacing * 2
-        ]);
+        cube([xSize, ySize, zSize]);
         translate([boxSpacing-trayOffset, -boxSpacing + trayOffset, boxSpacing - trayOffset]) cube([boxDimensions[0] + trayOffset*2, boxDimensions[1] + trayOffset*2, boxDimensions[2] + trayOffset*2]);
 
-        holeSizeX = boxDimensions[0] * 0.7;
-        holeOffsetX = (boxDimensions[0] - holeSizeX) / 2 + boxSpacing-trayOffset;
-        holeSizeZ = boxDimensions[2] * 0.5;
-        holeOffsetZ = (boxDimensions[2] - holeSizeZ + 3) / 2 + boxSpacing - trayOffset;
+        holeSizeX = xSize * 0.5;
+        holeOffsetX = (xSize - holeSizeX) / 2;
+        holeSizeZ = zSize * 0.5;
+        holeOffsetZ = (zSize - holeSizeZ) / 2;
+        holeSizeY = ySize;
+        holeOffsetY = ySize;
 
-    translate([holeOffsetX, boxDimensions[1]-boxSpacing-0.1, holeOffsetZ])
+    translate([holeOffsetX, holeOffsetY, holeOffsetZ])
     rotate([90, 0, 0]) 
     minkowski() {
             $fn=100; 
-            cube([holeSizeX, boxSpacing*4, holeSizeZ]);
-            rotate([0, 180, 0]) cylinder(r=boxSpacing*2, h=boxSpacing*4);
+            cube([holeSizeX, holeSizeZ, holeSizeY]);
+            rotate([0, 180, 0]) cylinder(r=boxSpacing, h=boxSpacing);
         }
         
     }
 
 }
 
-module createBox(boxDimensions, boxSpacing, roundRadius, handleLength, handleThickness, trayOffset) {
+module createBox(boxDimensions, roundRadius, handleLength, handleThickness, trayOffset, wallSize) {
     $box = boxDimensions;
+    boxSpacing = wallSize * 2;
     if (createBox)
     {
         difference() {
@@ -106,7 +65,7 @@ module createBox(boxDimensions, boxSpacing, roundRadius, handleLength, handleThi
     }
   
     if (createStorage) {
-        translate([-boxSpacing, 0, -boxSpacing]) createStoragePart(boxDimensions, boxSpacing, trayOffset);
+        translate([-boxSpacing, 0, -boxSpacing]) createStoragePart(boxDimensions, trayOffset, wallSize);
     }
 
 }
@@ -136,38 +95,28 @@ module createLine(spacing, line_height, faces, boxLength) {
     }
 }
 
-
-faceHuge = 50;
-faceMedium = 25;
-hugeBoxDimensions = [faceHuge, 180, 18];
-mediumBoxDimensions = [faceMedium, 180, 18];
-
-slotVgaDimensions = [46, 34, 18];
-slotSdDimensions = [32, 32, 18];
-slotSmallDimensions = [10, 8, 10];
-slotSmallDimensions2 = [10, 20, 10];
-slotSmallDimensions3 = [4, 4, 10];
-
-smallBox = [15, 180, 15];
-smallTray = [6, 6, 6];
-
 spacing = 1.6;
 offset = 0.4;
 
-slot25x30x18 = [25, 30, 18];
-
-trayLength = 180;
 line0Height = 18;
 
-slotHeight = 17.2;
-
+slotWidth = 11;
+slotHeight = 11;
+slotLength = 65;
+wallSize = 0.6;
+slotsRows = 1;
+slotsColumns = 1;
+handleLength = 5;
+handleThickness = 1.2;
+roundRadius = 1;
+traySpacing = 0.4;
 /*createBox(boxDimensions, boxSpacing, roundRadius, handleLength, handleThickness, trayOffset) */
 /*module createSlots(slot_dimensions, slots_rows, slots_columns, wall, offs) {*/
 
-
-createLine(2, 0, [0, 36, 36, 32, 32, 32], 67) {
-    createBox([12.2, 66.2, 12.2], 1.6, 2, 5, 1.2, 0) {
-        createSlots([11, 65, 11], 1, 1, 0.3, 0);
+rotate([180, 0, 90]) {
+createLine(wallSize * 3, 0, [0], slotLength + 4 * wallSize) {
+    createBox([slotWidth + 2 * wallSize, slotLength + wallSize * 2, slotHeight + wallSize * 2], roundRadius, handleLength, handleThickness, traySpacing, wallSize) {
+        createSlots([slotWidth, slotLength, slotHeight], slotsRows, slotsColumns, 0.3, 0);
     }
 }
 /*    createBox([36, trayLength, 18], 1.6, 4, 8, 1.6, 0.4) {
@@ -231,3 +180,4 @@ createLine(2, -2*(18 + spacing + 0.4), [0, 36, 36, 32, 32, 32], trayLength) {
     }
 }
 */
+}
