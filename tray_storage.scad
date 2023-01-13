@@ -161,12 +161,16 @@ line0Height = 18;
 
 slotHeight = 17.2;
 
-createLine(2, 0, [0, 36, 36, 32, 32, 32], trayLength) {
-    createBox([36, trayLength, 18], 1.6, 4, 8, 1.6, 0.4) {
-        createSlots([16, 32, slotHeight], 5, 2, 0.8, 0);
-        createSlots([32, 10, slotHeight], 1, 1, 0.8, -165);
+/*createBox(boxDimensions, boxSpacing, roundRadius, handleLength, handleThickness, trayOffset) */
+/*module createSlots(slot_dimensions, slots_rows, slots_columns, wall, offs) {*/
+
+
+createLine(2, 0, [0, 36, 36, 32, 32, 32], 61.2) {
+    createBox([9.2, 61.2, 8.6], 1.6, 2, 5, 1.2, 0) {
+        createSlots([8, 60, 8], 1, 1, 0.3, 0);
     }
-    createBox([36, trayLength, 18], 1.6, 4, 8, 1.6, 0.4) {
+}
+/*    createBox([36, trayLength, 18], 1.6, 4, 8, 1.6, 0.4) {
         createSlots([32, 43, slotHeight], 4, 1, 0.8, 0);
     }
     createBox([32, trayLength, 18], 1.6, 4, 8, 1.6, 0.4) {
