@@ -79,14 +79,3 @@ module createSlots(slot_dimensions, slots_rows, slots_columns, wall, offs) {
     }
 }
 
-function partialSum(arg, start, end) = start != end ? arg[start] + partialSum(arg, start + 1, end) : arg[start]; 
-
-module createLine(spacing, line_height, faces, boxLength) {
-    childrenSize = $children - 1;
-    for (i = [0 : childrenSize]) {
-
-        translate([partialSum(faces, 0, i) + i * spacing + i * boxOffset, 0, line_height]) 
-            children(i);
-        
-    }
-}

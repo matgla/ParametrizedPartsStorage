@@ -1,19 +1,13 @@
 include <tray_storage.scad>
 
 createStorage = true;
-createBox = true;
+createBox = false;
 boxOffset = 20;
 blockerOffset = 3;
 blockerRadius = 0.4;
 
-
-spacing = 1.6;
-offset = 0.4;
-
-line0Height = 18;
-
 slotWidth = 11;
-slotHeight = 11.4; // for box 11.4
+slotHeight = 11; // for box 11.4, for storage 11
 slotLength = 65;
 wallSize = 0.6;
 slotsRows = 1;
@@ -23,13 +17,28 @@ handleThickness = 1.2;
 roundRadius = 1;
 traySpacing = 0.4;
 
+boxSpacing = wallSize*2;
+boxSize = slotWidth + 2*(boxSpacing + traySpacing);
 
-rotate([180, 0, 90]) {
-createLine(wallSize * 3, 0, [0, slotWidth, slotWidth*2], slotLength + 4 * wallSize) {
-    createBox([slotWidth + 2 * wallSize, slotLength + wallSize * 2, slotHeight + wallSize * 2], roundRadius, handleLength, handleThickness, traySpacing, wallSize) {
-        createSlots([slotWidth, slotLength, slotHeight], slotsRows, slotsColumns, 0.3, 0);
+
+module createLine(columns, zOffset) {
+    for (i = [0:columns]) {
+        translate([i * boxSize, 0, zOffset]) {
+            createBox([slotWidth + 2 * wallSize, slotLength + wallSize * 2, slotHeight + wallSize * 2], roundRadius, handleLength, handleThickness, traySpacing, wallSize) {
+                createSlots([slotWidth, slotLength, slotHeight], slotsRows, slotsColumns, 0.3, 0);
+            } 
+        }
     }
 }
+
+rotate([180, 0, 90]) {
+    columns = 20;
+    for (i = [0:5]) {
+        zOffset = boxSize * i;
+        createLine(columns, zOffset);
+    }  
+}
+
 /*    createBox([36, trayLength, 18], 1.6, 4, 8, 1.6, 0.4) {
         createSlots([32, 43, slotHeight], 4, 1, 0.8, 0);
     }
@@ -91,4 +100,3 @@ createLine(2, -2*(18 + spacing + 0.4), [0, 36, 36, 32, 32, 32], trayLength) {
     }
 }
 */
-}
