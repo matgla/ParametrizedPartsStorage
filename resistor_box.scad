@@ -32,7 +32,7 @@ module createLine(columns, zOffset) {
 }
 
 rotate([180, 0, 90]) {
-    columns = 20;
+    columns = 10;
     for (i = [0:5]) {
         zOffset = boxSize * i;
         createLine(columns, zOffset);
