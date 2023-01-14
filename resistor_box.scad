@@ -1,10 +1,10 @@
 include <tray_storage.scad>
 
-createStorage = false;
+createStorage = true;
 createBox = true;
 boxOffset = 20;
-blockerOffset = 4;
-blockerRadius = 0.5;
+blockerOffset = 3;
+blockerRadius = 0.4;
 
 
 spacing = 1.6;
@@ -22,11 +22,10 @@ handleLength = 5;
 handleThickness = 1.2;
 roundRadius = 1;
 traySpacing = 0.4;
-/*createBox(boxDimensions, boxSpacing, roundRadius, handleLength, handleThickness, trayOffset) */
-/*module createSlots(slot_dimensions, slots_rows, slots_columns, wall, offs) {*/
+
 
 rotate([180, 0, 90]) {
-createLine(wallSize * 3, 0, [0], slotLength + 4 * wallSize) {
+createLine(wallSize * 3, 0, [0, slotWidth, slotWidth*2], slotLength + 4 * wallSize) {
     createBox([slotWidth + 2 * wallSize, slotLength + wallSize * 2, slotHeight + wallSize * 2], roundRadius, handleLength, handleThickness, traySpacing, wallSize) {
         createSlots([slotWidth, slotLength, slotHeight], slotsRows, slotsColumns, 0.3, 0);
     }
