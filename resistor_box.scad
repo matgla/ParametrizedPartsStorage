@@ -13,7 +13,7 @@ wallSize = 0.6;
 slotsRows = 1;
 slotsColumns = 1;
 handleLength = 5;
-handleThickness = 1.2;
+handleThickness = 1;
 roundRadius = 1;
 traySpacing = 0.4;
 
@@ -24,7 +24,7 @@ boxSize = slotWidth + 2*(boxSpacing + traySpacing);
 module createLine(columns, zOffset) {
     for (i = [0:columns]) {
         translate([i * boxSize, 0, zOffset]) {
-            createBox([slotWidth + 2 * wallSize, slotLength + wallSize * 2, slotHeight + wallSize * 2], roundRadius, handleLength, handleThickness, traySpacing, wallSize) {
+            createBox([slotWidth + 2 * wallSize, slotLength + wallSize * 2, slotHeight + wallSize], roundRadius, handleLength, handleThickness, traySpacing, wallSize) {
                 createSlots([slotWidth, slotLength, slotHeight], slotsRows, slotsColumns, 0.3, 0);
             } 
         }
