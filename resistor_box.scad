@@ -7,7 +7,7 @@ blockerOffset = 3;
 blockerRadius = 0.4;
 
 slotWidth = 11;
-slotHeight = 11.4; // for box 11.4, for storage 11
+slotHeight = 11.0; 
 slotLength = 65;
 wallSize = 0.6;
 slotsRows = 1;
