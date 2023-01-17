@@ -1,7 +1,7 @@
 include <tray_storage.scad>
 
-createStorage = true;
-createBox = false;
+createStorage = false;
+createBox = true;
 boxOffset = 20;
 blockerOffset = 3;
 blockerRadius = 0.4;
@@ -32,8 +32,8 @@ module createLine(columns, zOffset) {
 }
 
 rotate([180, 0, 90]) {
-    columns = 10;
-    for (i = [0:2 ]) {
+    columns = 0;
+    for (i = [0:0 ]) {
         zOffset = (boxSize - wallSize) * i;
         createLine(columns, zOffset);
     }  
