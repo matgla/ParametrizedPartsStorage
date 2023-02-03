@@ -77,6 +77,14 @@ module createLine(zOffset) {
             createSlots([10.5, 65, 19], 1, 2, 0.6, -12);
             createSlots([10.5, 11, 19], 1, 2, 0.6, 0);
     } 
+    translate([firstBoxSize * 8, 0, zOffset]) createBox([firstSlotWidth + 2 * wallSize, slotLength + wallSize * 2, 19 + wallSize], roundRadius, handleLength, handleThickness, traySpacing, wallSize) {
+        createSlots([21, 26, 19], 1, 1, 0.6, -154);
+        createSlots([21, 21, 19], 1, 1, 0.6, -132);
+        createSlots([21, 33, 19], 1, 1, 0.6, -98);
+        createSlots([21, 31, 19], 1, 1, 0.6, -66Q);
+        createSlots([21, 32, 19], 1, 1, 0.6, -33);
+        createSlots([21, 32, 19], 1, 1, 0.6, 0);
+    } 
 }
 // 178 width
 rotate([180, 0, 90]) {
