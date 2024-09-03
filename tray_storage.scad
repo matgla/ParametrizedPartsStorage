@@ -54,8 +54,10 @@ module createBox(boxDimensions, roundRadius, handleLength, handleThickness, tray
                     translate([i * boxDimensions[0], blockerOffset, blockerTrim/2]) cylinder(blockerLength, blockerRadius, blockerRadius);
                 }
             }
-            for (i = [0 : $children - 1]) {
-                children(i);
+            if ($children > 0) {
+                for (i = [0 : $children - 1]) {
+                    children(i);
+                }
             }
         }
     }
