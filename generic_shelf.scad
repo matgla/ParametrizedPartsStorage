@@ -1,60 +1,89 @@
 include <tray_storage.scad>
 
-createStorage = true;
-createBox = true;
 
-boxOffset = 20;
-blockerOffset = 3;
-blockerRadius = 0.4;
+function cumulativeHeight(rows, wallThickness) = [for (sum=0, i=0; i<len(rows); newsum=sum+rows[i][1], nexti=i+1, sum=newsum, i=nexti) sum];
 
-slotWidth = 20;
-slotHeight = 20.4; //11 for storage, 11.6 for box 
-slotLength = 70;
-wallSize = 0.5;
-slotsRows = 5;
-slotsColumns = 10;
-handleLength = 5;
-handleThickness = 1;
-roundRadius = 1;
-traySpacing = 0.2;
+function cumulativeWidth(rows, wallThickness) = [for (sum=0, i=0; i<len(rows); newsum=sum+rows[i][0], nexti=i+1, sum=newsum, i=nexti) sum];
+   
 
-// 15x15
-// 20.8x20.4
-// 32.4x20.4
+function fullHeight(rows, wallThickness) = [for (sum=rows[0][1], i=1; i<=len(rows); newsum=sum+rows[i][1], nexti=i+1, sum=newsum, i=nexti) sum];
 
-shelfs = [
-    [15, 15],
-    [20, 20],
-    [32, 20]
-];
+module createShelfSlot(dimensions, wallThickness) {
+    backSize = dimensions[0] / 3;
+    difference() {
+        cube(dimensions);
+        translate([wallThickness, -wallThickness, wallThickness]) cube([dimensions[0] - wallThickness*2, dimensions[1], dimensions[2] - wallThickness*2]);
+        translate([backSize, wallThickness*4, backSize]) {
+            $fn=30;
+            rotate([-90, 0, 0]) minkowski() {
+                rotate([90, 0, 0]) cube([dimensions[0]-2*backSize, dimensions[1], dimensions[2]-backSize*2]);
+                cylinder(r=backSize/2, h=wallThickness);
+            }
+        }
+    }
+}
 
-function cumulativeHeight(rows) = [for (row=rows[0], i=1; i<=len(rows); newsum=sum+row[i][1], nexti=i+1, sum=newsum, i=nexti) sum];
+module createBlocker(blockerSize, blockerHeight) {
+    cylinder(r=blockerSize, blockerHeight);
+    $fn=30;
+    translate([0, 0, blockerHeight])sphere(blockerSize);
+}
 
-
-module createLine(columns, zOffset, width, length, height, rows, columns) {
-    boxSpacing = wallSize*2;
-    boxSize = width + 2*(boxSpacing + traySpacing);
-    for (i = [0:columns]) {
-        translate([cumulativeHeight(shelfs[i:]), 0, zOffset]) {
-            createBox([width + 2 * wallSize, length + wallSize * 2, height + wallSize], roundRadius, handleLength, handleThickness, traySpacing, wallSize) {
-                createSlots([width, length, height], rows, columns, wallSize, 0);
+module createDrawer(dimensions, wallSize, handleLength, handleThickness, spacing, blockerSize) {
+    difference() {
+        translate([0, 0, 0]) {
+            cube(dimensions);
+            $fn=30;
+            handleRadius = 4;
+            translate([handleRadius/2, -handleLength+handleRadius/2, 0]) {
+                minkowski() {
+                    cube([dimensions[0]-handleRadius, handleLength, handleThickness]);
+                    cylinder(r=handleRadius/2, h=handleThickness/100000);
+                }
+            }
+            translate([0, dimensions[1] * 0.05, dimensions[2] * 0.1]) {
+                translate([0, 0, 0]) createBlocker(blockerSize*2, dimensions[2] * 0.8);
+                translate([dimensions[0], 0, 0]) createBlocker(blockerSize*2, dimensions[2] * 0.8);
             } 
         }
+        translate([wallSize, wallSize, wallSize]) cube([dimensions[0] - wallSize*2, dimensions[1] - wallSize * 2, dimensions[2] + wallSize]);
     }
+
 }
 
-// (boxDimensions, roundRadius, handleLength, handleThickness, trayOffset, wallSize)
-    
-// shelfs, array of 3 element vectors, 
-// 0 - width, 2 - height
-module createShelf(shelfs, width, length, wallSize, handleThickness, handleLength) {
-    for (i = [0: len(shelfs)]) {
-        height = height + shelfs[i][1];
-        translate([0, 0, height]) createStoragePart([shelfs[i][0], length, shelfs[i][1]], 0.8, 0.8, 4, 1, 0.8, wallSize) {
-           
+
+module createShelf(shelfs, width, length, wallSize, handleThickness, handleLength, spacing, blockerSize, drawShelf, drawDrawers, drawSingleDrawers) {
+    shelfHeight = fullHeight(shelfs, wallSize)[len(shelfs)-1];
+    rotate([0, 0, 0]) {
+        if (drawShelf) {
+            difference() {
+                cube([width+2*wallSize, length, shelfHeight+2*wallSize]);
+                translate([wallSize, -wallSize, wallSize]) cube([width, length + wallSize*2, shelfHeight]);
+            }
         }
-
+        translate([wallSize, 0, wallSize]) {
+            for (i = [0: len(shelfs) - 1]) {
+                height = cumulativeHeight(shelfs, wallSize)[i];
+                columns = width / shelfs[i][0];    
+                for (x = [0: columns - 1]) {
+                    xoffset = (shelfs[i][0]) * x;
+                    translate([xoffset, 0, height]) {
+                        dimensions = [shelfs[i][0], length, shelfs[i][1]];
+                        if (drawShelf) {
+                            createShelfSlot(dimensions, wallSize);
+                        }
+                        drawerDimensions = [shelfs[i][0] - 2*(wallSize + spacing), length - wallSize * 2 - spacing, shelfs[i][1] - 2 * (wallSize + spacing)]; 
+                        if (drawDrawers) {
+                            translate([wallSize+spacing, 0, wallSize+spacing]) createDrawer(drawerDimensions, wallSize*2, handleLength, handleThickness, spacing, blockerSize);
+                        }
+                        
+                        if (drawSingleDrawers && x == 0) {
+                            translate([width + cumulativeWidth(shelfs, wallSize)[i] + wallSize * 8, 0, -height]) createDrawer(drawerDimensions, wallSize*2, handleLength, handleThickness, spacing, blockerSize);
+                        }
+                    }
+                }
+            }
+        }
     }
 }
 
-createShelf(shelfs, 160, 65, wallSize, handleThickness, handleLength);

@@ -54,16 +54,14 @@ module createBox(boxDimensions, roundRadius, handleLength, handleThickness, tray
                     translate([i * boxDimensions[0], blockerOffset, blockerTrim/2]) cylinder(blockerLength, blockerRadius, blockerRadius);
                 }
             }
-            if ($children > 0) {
-                for (i = [0 : $children - 1]) {
-                    children(i);
-                }
+            for (i = [0 : $children - 1]) {
+                children(i);
             }
         }
     }
   
     if (createStorage) {
-        translate([-boxSpacing, 0, -boxSpacing]) createStoragePart(boxDimensions, trayOffset, wallSize);
+        translate([-boxSpacing, 0, 0]) createStoragePart(boxDimensions, trayOffset, wallSize);
     }
 
 }
